@@ -1,9 +1,8 @@
 package chat.demo.chat;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import chat.demo.chatroom.ChatRoom;
+import chat.demo.user.User;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,9 +19,17 @@ public class ChatMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
+
     private String chatId;
-    private String senderId;
-    private String recipientId;
+
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.MERGE)
+    @JoinColumn(name = "sender_nick_name", referencedColumnName = "nickName")
+    private User sender;
+
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.MERGE)
+    @JoinColumn(name = "recipient_nick_name", referencedColumnName = "nickName")
+    private User recipient;
+
     private String content;
     private Date timestamp;
 }

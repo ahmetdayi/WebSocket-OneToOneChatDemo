@@ -1,11 +1,13 @@
 package chat.demo.user;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -26,6 +28,11 @@ public class UserService {
 
     public List<User> findConnectedUser(){
         return userRepository.findAllByStatus(Status.ONLINE);
+    }
+
+    public User findById(String id){
+        System.out.println(userRepository.findById(id));
+        return userRepository.findById(id).orElseThrow();//TODO hata don
     }
 
 

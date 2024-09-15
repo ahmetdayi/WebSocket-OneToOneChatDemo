@@ -122,9 +122,11 @@ function displayMessage(senderId, content) {
 async function fetchAndDisplayUserChat() {
     const userChatResponse = await fetch(`/messages/${nickname}/${selectedUserId}`);
     const userChat = await userChatResponse.json();
+
     chatArea.innerHTML = '';
     userChat.forEach(chat => {
-        displayMessage(chat.senderId, chat.content);
+        console.log("chat.sender.nickName",chat.sender.nickName)
+        displayMessage(chat.sender.nickName, chat.content);
     });
     chatArea.scrollTop = chatArea.scrollHeight;
 }
@@ -136,27 +138,47 @@ function onError() {
 }
 
 
-function sendMessage(event) {
+async function sendMessage(event) {
+    event.preventDefault()
     const messageContent = messageInput.value.trim();
     if (messageContent && stompClient) {
+        let sender
+        let recipient
+      try {
+          console.log(`/user/${nickname}`)
+          console.log(`/user/${selectedUserId}`)
+           sender = await fetch(`/user/${nickname}`);
+           recipient = await fetch(`/user/${selectedUserId}`);
+      }catch (e) {
+          console.log(e)
+      }
+        const senderJson = await sender.json();
+        const recipientJson = await recipient.json();
+
         const chatMessage = {
-            senderId: nickname,
-            recipientId: selectedUserId,
+            sender: senderJson,
+            recipient: recipientJson,
             content: messageInput.value.trim(),
             timestamp: new Date()
         };
+        console.log("ChatMessage",chatMessage)
         stompClient.send("/app/chat", {}, JSON.stringify(chatMessage));
         displayMessage(nickname, messageInput.value.trim());
         messageInput.value = '';
     }
     chatArea.scrollTop = chatArea.scrollHeight;
-    event.preventDefault();
+
+}
+async function findUserByNickName(id){
+    const user = await fetch(`/user/${id}`);
+    return await user.json();
+
 }
 
 
 async function onMessageReceived(payload) {
     await findAndDisplayConnectedUsers();
-    console.log('Message received', payload);
+    console.log('Message received PAYLOAD', payload);
 
     const message = JSON.parse(payload.body);
     console.log(message.senderId)

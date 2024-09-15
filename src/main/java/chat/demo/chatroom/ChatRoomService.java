@@ -1,5 +1,7 @@
 package chat.demo.chatroom;
 
+import chat.demo.user.User;
+import chat.demo.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,10 +13,12 @@ public class ChatRoomService {
 
     private final ChatRoomRepository repository;
     private final ChatRoomRepository chatRoomRepository;
+    private final UserService userService;
 
     public Optional<String> getChatRoomId(String senderId,String recipientId,Boolean createNewRoomIfNotExist){
 
-        return repository.findBySenderIdAndRecipientId(senderId,recipientId)
+        Optional<ChatRoom> bySenderNickNameAndRecipientNickName = repository.findBySender_NickNameAndRecipient_NickName(senderId, recipientId);
+        return bySenderNickNameAndRecipientNickName
                 .map(ChatRoom::getChatId)
                 .or(() -> {
                     if (createNewRoomIfNotExist){
@@ -26,16 +30,19 @@ public class ChatRoomService {
     }
 
     private String createChat(String senderId, String recipientId) {
+        User sender = userService.findById(senderId);
+        User recipient = userService.findById(recipientId);
+
         String chatId = String.format("%s_%s", senderId,recipientId); // ahmet_ali
         ChatRoom senderRecipient = ChatRoom.builder()
                 .chatId(chatId)
-                .senderId(senderId)
-                .recipientId(recipientId)
+                .sender(sender)
+                .recipient(recipient)
                 .build();
         ChatRoom recipientSender = ChatRoom.builder()
                 .chatId(chatId)
-                .senderId(recipientId)
-                .recipientId(senderId)
+                .sender(recipient)
+                .recipient(sender)
                 .build();
         chatRoomRepository.save(senderRecipient);
         chatRoomRepository.save(recipientSender);

@@ -17,8 +17,8 @@ public class ChatMessageService {
 
     public ChatMessage save(ChatMessage chatMessage) {
         String chatId = chatRoomService.getChatRoomId(
-                        chatMessage.getSenderId(),
-                        chatMessage.getRecipientId(),
+                        chatMessage.getSender().getNickName(),
+                        chatMessage.getRecipient().getNickName(),
                         true)
                 .orElseThrow();//TODO hata don
         chatMessage.setChatId(chatId);
@@ -28,6 +28,7 @@ public class ChatMessageService {
     public List<ChatMessage> findChatMessage(String senderId,String recipientId){
 
         Optional<String> chatId = chatRoomService.getChatRoomId(senderId,recipientId,false);
-        return chatId.map(repository::findByChatId).orElse(new ArrayList<>());
+        Optional<List<ChatMessage>> chatMessages = chatId.map(repository::findByChatId);
+        return chatMessages.orElse(new ArrayList<>());
     }
 }

@@ -25,12 +25,12 @@ public class ChatController {
          ChatMessage savedMessage = chatMessageService.save(chatMessage);
          // /jhon/queue/messages
          messagingTemplate.convertAndSendToUser(
-                 chatMessage.getRecipientId(),
+                 chatMessage.getRecipient().getNickName(),
                  "/queue/messages",
                  ChatNotification.builder()
                          .id(savedMessage.getId())
-                         .senderId(savedMessage.getSenderId())
-                         .recipientId(savedMessage.getRecipientId())
+                         .senderId(savedMessage.getSender().getNickName())
+                         .recipientId(savedMessage.getRecipient().getNickName())
                          .content(savedMessage.getContent())
                          .build()
          );
@@ -41,6 +41,7 @@ public class ChatController {
             @PathVariable("senderId") String senderId,
             @PathVariable("recipientId") String recipientId
     ){
+        System.out.println(chatMessageService.findChatMessage(senderId, recipientId));
         return ResponseEntity.ok(chatMessageService.findChatMessage(senderId, recipientId));
     }
 }

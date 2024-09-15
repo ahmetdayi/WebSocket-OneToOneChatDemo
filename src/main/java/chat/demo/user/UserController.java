@@ -8,6 +8,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -35,5 +36,9 @@ public class UserController {
     @GetMapping("/users")
     public ResponseEntity<List<User>> findConnectedUser(){
         return new ResponseEntity<>(userService.findConnectedUser(), HttpStatus.OK);
+    }
+    @GetMapping("/user/{id}")
+    public ResponseEntity<User> findById(@PathVariable("id") String id){
+        return new ResponseEntity<>(userService.findById(id), HttpStatus.OK);
     }
 }

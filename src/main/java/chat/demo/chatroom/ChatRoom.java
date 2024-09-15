@@ -1,13 +1,14 @@
 package chat.demo.chatroom;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import chat.demo.chat.ChatMessage;
+import chat.demo.user.User;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -18,8 +19,17 @@ public class ChatRoom {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-    private String chatId;
-    private String senderId;
-    private String recipientId;
 
+    private String chatId;
+
+    @ManyToOne(cascade = CascadeType.MERGE,fetch = FetchType.EAGER)
+    @JoinColumn(name = "sender_nick_name", referencedColumnName = "nickName")
+    private User sender;
+
+    @ManyToOne(cascade = CascadeType.MERGE,fetch = FetchType.EAGER)
+    @JoinColumn(name = "recipient_nick_name", referencedColumnName = "nickName")
+    private User recipient;
+
+//    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
+//    private List<ChatMessage> messages;
 }
