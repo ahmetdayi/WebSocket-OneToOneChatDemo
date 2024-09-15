@@ -22,22 +22,22 @@ public class ChatController {
      public void processMessage(
              @Payload ChatMessage chatMessage
      ){
-         ChatMessage savedMessage = chatMessageService.save(chatMessage);
+         ChatMessageResponse savedMessage = chatMessageService.save(chatMessage);
          // /jhon/queue/messages
          messagingTemplate.convertAndSendToUser(
                  chatMessage.getRecipient().getNickName(),
                  "/queue/messages",
                  ChatNotification.builder()
-                         .id(savedMessage.getId())
-                         .senderId(savedMessage.getSender().getNickName())
-                         .recipientId(savedMessage.getRecipient().getNickName())
-                         .content(savedMessage.getContent())
+                         .id(savedMessage.id())
+                         .senderId(savedMessage.sender().getNickName())
+                         .recipientId(savedMessage.recipient().getNickName())
+                         .content(savedMessage.content())
                          .build()
          );
      }
 
     @GetMapping("/messages/{senderId}/{recipientId}")
-    public ResponseEntity<List<ChatMessage>> findChatMessages(
+    public ResponseEntity<List<ChatMessageResponse>> findChatMessages(
             @PathVariable("senderId") String senderId,
             @PathVariable("recipientId") String recipientId
     ){

@@ -13,6 +13,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserConverter userConverter;
 
     public void saveUser(User user){
         user.setStatus(Status.ONLINE);
@@ -26,13 +27,17 @@ public class UserService {
         }
     }
 
-    public List<User> findConnectedUser(){
-        return userRepository.findAllByStatus(Status.ONLINE);
+    public List<UserResponse> findConnectedUser(){
+        return userConverter.convert(userRepository.findAllByStatus(Status.ONLINE));
     }
 
     public User findById(String id){
         System.out.println(userRepository.findById(id));
         return userRepository.findById(id).orElseThrow();//TODO hata don
+    }
+    public UserResponse getById(String id){
+        System.out.println(userRepository.findById(id));
+        return userConverter.convert(userRepository.findById(id).orElseThrow());//TODO hata don
     }
 
 

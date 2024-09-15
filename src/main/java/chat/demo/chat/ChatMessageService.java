@@ -14,8 +14,9 @@ public class ChatMessageService {
 
     private final ChatMessageRepository repository;
     private final ChatRoomService chatRoomService;
+    private final ChatMessageConverter chatMessageConverter;
 
-    public ChatMessage save(ChatMessage chatMessage) {
+    public ChatMessageResponse save(ChatMessage chatMessage) {
         String chatId = chatRoomService.getChatRoomId(
                         chatMessage.getSender().getNickName(),
                         chatMessage.getRecipient().getNickName(),
@@ -23,12 +24,12 @@ public class ChatMessageService {
                 .orElseThrow();//TODO hata don
         chatMessage.setChatId(chatId);
         repository.save(chatMessage);
-        return chatMessage;
+        return chatMessageConverter.convert(chatMessage);
     }
-    public List<ChatMessage> findChatMessage(String senderId,String recipientId){
+    public List<ChatMessageResponse> findChatMessage(String senderId,String recipientId){
 
         Optional<String> chatId = chatRoomService.getChatRoomId(senderId,recipientId,false);
         Optional<List<ChatMessage>> chatMessages = chatId.map(repository::findByChatId);
-        return chatMessages.orElse(new ArrayList<>());
+        return chatMessageConverter.convert(chatMessages.orElse(new ArrayList<>()));
     }
 }

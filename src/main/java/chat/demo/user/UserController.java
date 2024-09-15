@@ -34,11 +34,11 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<User>> findConnectedUser(){
+    public ResponseEntity<List<UserResponse>> findConnectedUser(){
         return new ResponseEntity<>(userService.findConnectedUser(), HttpStatus.OK);
     }
     @GetMapping("/user/{id}")
-    public ResponseEntity<User> findById(@PathVariable("id") String id){
-        return new ResponseEntity<>(userService.findById(id), HttpStatus.OK);
+    public ResponseEntity<UserResponse> findById(@PathVariable("id") String id){
+        return new ResponseEntity<>(userService.getById(id), HttpStatus.OK);
     }
 }
