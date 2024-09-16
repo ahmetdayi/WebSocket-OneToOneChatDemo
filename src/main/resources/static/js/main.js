@@ -10,15 +10,15 @@ const chatArea = document.querySelector('#chat-messages');
 const logout = document.querySelector('#logout');
 
 let stompClient = null;
-let nickname = null;
+let userId = null;
 let fullname = null;
 let selectedUserId = null;
 
 function connect(event) {
-    nickname = document.querySelector('#nickname').value.trim();
+    userId = document.querySelector('#nickname').value.trim();
     fullname = document.querySelector('#fullname').value.trim();
 
-    if (nickname && fullname) {
+    if (userId && fullname) {
         usernamePage.classList.add('hidden');
         chatPage.classList.remove('hidden');
 
@@ -32,13 +32,13 @@ function connect(event) {
 
 
 function onConnected() {
-    stompClient.subscribe(`/user/${nickname}/queue/messages`, onMessageReceived);
+    stompClient.subscribe(`/user/${userId}/queue/messages`, onMessageReceived);
     stompClient.subscribe(`/public`, onMessageReceived);
 
     // register the connected user
     stompClient.send("/app/user.addUser",
         {},
-        JSON.stringify({nickName: nickname, fullName: fullname, status: 'ONLINE'})
+        JSON.stringify({id: userId, firstname: fullname,lastname:"a" ,universityEmail: "", description:"",verified:true, status: 'ONLINE'})
     );
     document.querySelector('#connected-user-fullname').textContent = fullname;
     findAndDisplayConnectedUsers().then();
@@ -47,7 +47,7 @@ function onConnected() {
 async function findAndDisplayConnectedUsers() {
     const connectedUsersResponse = await fetch('/users');
     let connectedUsers = await connectedUsersResponse.json();
-    connectedUsers = connectedUsers.filter(user => user.nickName !== nickname);
+    connectedUsers = connectedUsers.filter(user => user.id !== id);
     const connectedUsersList = document.getElementById('connectedUsers');
     connectedUsersList.innerHTML = '';
 
@@ -64,14 +64,14 @@ async function findAndDisplayConnectedUsers() {
 function appendUserElement(user, connectedUsersList) {
     const listItem = document.createElement('li');
     listItem.classList.add('user-item');
-    listItem.id = user.nickName;
+    listItem.id = user.id;
 
     const userImage = document.createElement('img');
     userImage.src = '../img/user_icon.png';
-    userImage.alt = user.fullName;
+    userImage.alt = user.firstname;
 
     const usernameSpan = document.createElement('span');
-    usernameSpan.textContent = user.fullName;
+    usernameSpan.textContent = user.firstname;
 
     const receivedMsgs = document.createElement('span');
     receivedMsgs.textContent = '0';
@@ -108,7 +108,7 @@ function displayMessage(senderId, content) {
     const messageContainer = document.createElement('div');
     console.log("aaaaaaaaaaaaaaa")
     messageContainer.classList.add('message');
-    if (senderId === nickname) {
+    if (senderId === userId) {
         messageContainer.classList.add('sender');
     } else {
         messageContainer.classList.add('receiver');
@@ -120,13 +120,13 @@ function displayMessage(senderId, content) {
 }
 
 async function fetchAndDisplayUserChat() {
-    const userChatResponse = await fetch(`/messages/${nickname}/${selectedUserId}`);
+    const userChatResponse = await fetch(`/messages/${userId}/${selectedUserId}`);
     const userChat = await userChatResponse.json();
 
     chatArea.innerHTML = '';
     userChat.forEach(chat => {
-        console.log("chat.sender.nickName",chat.sender.nickName)
-        displayMessage(chat.sender.nickName, chat.content);
+        console.log("chat.sender.id",chat.sender.id)
+        displayMessage(chat.sender.id, chat.content);
     });
     chatArea.scrollTop = chatArea.scrollHeight;
 }
@@ -145,9 +145,9 @@ async function sendMessage(event) {
         let sender
         let recipient
       try {
-          console.log(`/user/${nickname}`)
+          console.log(`/user/${userId}`)
           console.log(`/user/${selectedUserId}`)
-           sender = await fetch(`/user/${nickname}`);
+           sender = await fetch(`/user/${userId}`);
            recipient = await fetch(`/user/${selectedUserId}`);
       }catch (e) {
           console.log(e)
@@ -163,18 +163,12 @@ async function sendMessage(event) {
         };
         console.log("ChatMessage",chatMessage)
         stompClient.send("/app/chat", {}, JSON.stringify(chatMessage));
-        displayMessage(nickname, messageInput.value.trim());
+        displayMessage(userId, messageInput.value.trim());
         messageInput.value = '';
     }
     chatArea.scrollTop = chatArea.scrollHeight;
 
 }
-async function findUserByNickName(id){
-    const user = await fetch(`/user/${id}`);
-    return await user.json();
-
-}
-
 
 async function onMessageReceived(payload) {
     await findAndDisplayConnectedUsers();
@@ -206,7 +200,8 @@ async function onMessageReceived(payload) {
 function onLogout() {
     stompClient.send("/app/user.disconnectUser",
         {},
-        JSON.stringify({nickName: nickname, fullName: fullname, status: 'OFFLINE'})
+        //TODO burda direkt userin idsi elimizde oldugu icin userin idsinden kullaniciyi getirecez
+        JSON.stringify({id: userId, firstname: fullname,lastname:"a" ,universityEmail: "", description:"",verified:true, status: 'OFFLINE'})
     );
     window.location.reload();
 }

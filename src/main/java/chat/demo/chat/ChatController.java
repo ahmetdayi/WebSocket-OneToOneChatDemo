@@ -25,12 +25,12 @@ public class ChatController {
          ChatMessageResponse savedMessage = chatMessageService.save(chatMessage);
          // /jhon/queue/messages
          messagingTemplate.convertAndSendToUser(
-                 chatMessage.getRecipient().getNickName(),
+                 chatMessage.getRecipient().getId(),
                  "/queue/messages",
                  ChatNotification.builder()
                          .id(savedMessage.id())
-                         .senderId(savedMessage.sender().getNickName())
-                         .recipientId(savedMessage.recipient().getNickName())
+                         .senderId(savedMessage.sender().id())
+                         .recipientId(savedMessage.recipient().id())
                          .content(savedMessage.content())
                          .build()
          );

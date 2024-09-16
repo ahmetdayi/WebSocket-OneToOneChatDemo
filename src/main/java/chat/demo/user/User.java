@@ -4,6 +4,7 @@ import chat.demo.chat.ChatMessage;
 import chat.demo.chatroom.ChatRoom;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,15 +14,28 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "users")
+@Builder
 public class User {
 
     @Id
-    private String nickName;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
-    private String fullName;
+    private String firstname;
+
+    private String lastname;
+
+    private String universityEmail;
+
+    private String description;
+
+    private Status status;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
+    @Builder.Default
+    private Role role = Role.USER;
+    @Builder.Default
+    private Boolean verified = Boolean.FALSE;
 
 //    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL)
 //    private List<ChatRoom> sentChatRooms;

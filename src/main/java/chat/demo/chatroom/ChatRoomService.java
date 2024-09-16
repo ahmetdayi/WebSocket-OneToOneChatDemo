@@ -17,13 +17,13 @@ public class ChatRoomService {
 
     public Optional<String> getChatRoomId(String senderId,String recipientId,Boolean createNewRoomIfNotExist){
 
-        Optional<ChatRoom> bySenderNickNameAndRecipientNickName = repository.findBySender_NickNameAndRecipient_NickName(senderId, recipientId);
+        Optional<ChatRoom> bySenderNickNameAndRecipientNickName = repository.findBySender_IdAndRecipient_Id(senderId, recipientId);
         return bySenderNickNameAndRecipientNickName
                 .map(ChatRoom::getChatId)
                 .or(() -> {
                     if (createNewRoomIfNotExist){
-                        String chatid = createChat(senderId,recipientId);
-                        return Optional.of(chatid);
+                        String chatId = createChat(senderId,recipientId);
+                        return Optional.of(chatId);
                     }
                     return Optional.empty();
                 });

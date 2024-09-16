@@ -1,6 +1,7 @@
 package chat.demo.chat;
 
 import chat.demo.user.User;
+import chat.demo.user.UserResponse;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -12,8 +13,8 @@ public record ChatMessageResponse(
 
         String id,
         String chatId,
-        User sender,
-        User recipient,
+        UserResponse sender,
+        UserResponse recipient,
         String content,
         Date timestamp
 ) {

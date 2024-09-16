@@ -23,11 +23,11 @@ public class ChatMessage {
     private String chatId;
 
     @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.MERGE)
-    @JoinColumn(name = "sender_nick_name", referencedColumnName = "nickName")
+    @JoinColumn
     private User sender;
 
     @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.MERGE)
-    @JoinColumn(name = "recipient_nick_name", referencedColumnName = "nickName")
+    @JoinColumn
     private User recipient;
 
     private String content;

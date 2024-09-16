@@ -18,8 +18,8 @@ public class ChatMessageService {
 
     public ChatMessageResponse save(ChatMessage chatMessage) {
         String chatId = chatRoomService.getChatRoomId(
-                        chatMessage.getSender().getNickName(),
-                        chatMessage.getRecipient().getNickName(),
+                        chatMessage.getSender().getId(),
+                        chatMessage.getRecipient().getId(),
                         true)
                 .orElseThrow();//TODO hata don
         chatMessage.setChatId(chatId);

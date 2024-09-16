@@ -8,13 +8,26 @@ import java.util.List;
 public class UserConverter {
 
     public UserResponse convert(User from) {
-        return new UserResponse(from.getNickName(), from.getFullName(), from.getStatus());
+        return new UserResponse(
+                from.getId(),
+                from.getFirstname(),
+                from.getLastname(),
+                from.getUniversityEmail(),
+                from.getDescription(),
+                from.getRole(),
+                from.getVerified(),
+                from.getStatus());
     }
 
     public List<UserResponse> convert(List<User> fromList) {
         return fromList.stream().map(from -> new UserResponse(
-                        from.getNickName(),
-                        from.getFullName(),
+                        from.getId(),
+                        from.getFirstname(),
+                        from.getLastname(),
+                        from.getUniversityEmail(),
+                        from.getDescription(),
+                        from.getRole(),
+                        from.getVerified(),
                         from.getStatus()))
                 .toList();
     }
